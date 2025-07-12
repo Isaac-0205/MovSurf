@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Watchlist - MovieSurf{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col">
+        <h2>My Watchlist</h2>
+        <p class="lead">{{ watchlist.count }} movies in your watchlist</p>
+    </div>
+</div>
+
+<div class="row">
+    {% for item in watchlist %}
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            {% if item.movie.poster %}
+            <img src="{{ item.movie.poster.url }}" class="card-img-top" alt="{{ item.movie.title }}">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ item.movie.title }}</h5>
+                <p class="card-text">{{ item.movie.description|truncatewords:20 }}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">{{ item.movie.release_date|date:"Y" }}</small>
+                    <div>
+                        <a href="{% url 'movies:movie_detail' item.movie.id %}" class="btn btn-primary btn-sm">View Details</a>
+                        <form method="POST" action="{% url 'movies:watchlist_remove' item.movie.id %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to remove this movie from your watchlist?')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info">
+            Your watchlist is empty. Add movies you're interested in to your watchlist!
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Movie - {{ movie.title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Delete Movie</h3>
+            </div>
+            <div class="card-body">
+                <p>Are you sure you want to delete the movie "{{ movie.title }}"?</p>
+                <p class="text-danger">This action cannot be undone.</p>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-danger">Delete Movie</button>
+                        <a href="{% url 'movies:movie_detail' movie.pk %}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

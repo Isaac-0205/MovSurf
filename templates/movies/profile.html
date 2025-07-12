@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h3>User Profile</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <img src="{{ profile.get_profile_picture_url }}" 
+                                     alt="Profile Picture" 
+                                     class="rounded-circle" 
+                                     style="width: 150px; height: 150px; object-fit: cover;">
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h5>Username:</h5>
+                                    <p>{{ user.username }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5>Email:</h5>
+                                    <p>{{ user.email }}</p>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <h5>Date Joined:</h5>
+                                    <p>{{ user.date_joined|date:"F j, Y" }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5>Date of Birth:</h5>
+                                    <p>{{ profile.date_of_birth|date:"F j, Y"|default:"Not set" }}</p>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <h5>Bio:</h5>
+                                <p>{{ profile.bio|default:"No bio set yet" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <a href="{% url 'movies:edit_profile' %}" class="btn btn-primary">Edit Profile</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Watchlist Section -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h3>My Watchlist</h3>
+                </div>
+                <div class="card-body">
+                    {% if watchlisted_movies %}
+                        <div class="row">
+                            {% for item in watchlisted_movies %}
+                            <div class="col-md-6 mb-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ item.movie.title }}</h5>
+                                        <p class="card-text">{{ item.movie.description|truncatewords:20 }}</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <a href="{% url 'movies:movie_detail' item.movie.pk %}" class="btn btn-primary">View Movie</a>
+                                            <a href="{% url 'movies:remove_from_watchlist' item.movie.pk %}" class="btn btn-danger">Remove</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Your watchlist is empty.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Reviews Section -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h3>My Reviews</h3>
+                </div>
+                <div class="card-body">
+                    {% if reviews %}
+                        <div class="list-group">
+                            {% for review in reviews %}
+                            <div class="list-group-item">
+                                <h5>{{ review.movie.title }}</h5>
+                                <div class="rating">
+                                    {% for i in "12345" %}
+                                    <i class="fas fa-star{% if forloop.counter <= review.rating %} active{% endif %}"></i>
+                                    {% endfor %}
+                                </div>
+                                <p>{{ review.comment }}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">{{ review.created_at|naturaltime }}</small>
+                                    <div>
+                                        <a href="{% url 'movies:edit_review' review.movie.pk review.pk %}" class="btn btn-sm btn-primary">Edit</a>
+                                        <a href="{% url 'movies:delete_review' review.movie.pk review.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">You haven't written any reviews yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

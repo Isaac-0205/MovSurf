@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - MovieSurf{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-3">
+        <h4>Genres</h4>
+        <div class="list-group">
+            {% for genre in genres %}
+            <a href="{% url 'movies:movie_list' %}?genre={{ genre.id }}" class="list-group-item list-group-item-action">
+                {{ genre.name }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-md-9">
+        <h2>Featured Movies</h2>
+        <div class="row">
+            {% for movie in movies %}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    {% if movie.poster %}
+                    <img src="{{ movie.poster.url }}" class="card-img-top" alt="{{ movie.title }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ movie.title }}</h5>
+                        <p class="card-text">{{ movie.description|truncatewords:20 }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">{{ movie.release_date|date:"Y" }}</small>
+                            <a href="{% url 'movies:movie_detail' movie.id %}" class="btn btn-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

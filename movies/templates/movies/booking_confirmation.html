@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="alert alert-success">
+        <h4>Booking Confirmed!</h4>
+        <p>Your booking has been successfully confirmed.</p>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Booking Details</h5>
+            <p><strong>Movie:</strong> {{ booking.showtime.movie.title }}</p>
+            <p><strong>Showtime:</strong> {{ booking.showtime.start_time|date:"F j, Y, g:i A" }}</p>
+            <p><strong>Theater:</strong> {{ booking.showtime.screen.theater.name }}</p>
+            <p><strong>Screen:</strong> {{ booking.showtime.screen.number }}</p>
+            <p><strong>Total Amount:</strong> ₹{{ booking.total_amount }}</p>
+            <p><strong>Status:</strong> {{ booking.get_status_display }}</p>
+            
+            <h5 class="mt-4">Your Tickets</h5>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Seat Number</th>
+                            <th>Row</th>
+                            <th>Seat Type</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ticket in tickets %}
+                        <tr>
+                            <td>{{ ticket.seat.number }}</td>
+                            <td>{{ ticket.seat.row }}</td>
+                            <td>{{ ticket.seat.get_seat_type_display }}</td>
+                            <td>₹{{ ticket.price }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

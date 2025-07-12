@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Delete Review{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h3>Delete Review</h3>
+        </div>
+        <div class="card-body">
+            <p>Are you sure you want to delete your review for "{{ movie.title }}"?</p>
+            <p>Rating: {{ review.rating }} stars</p>
+            <p>Comment: {{ review.comment }}</p>
+            <form method="post" class="mt-3">
+                {% csrf_token %}
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-danger">Delete Review</button>
+                    <a href="{% url 'movies:movie_detail' movie.pk %}" class="btn btn-secondary ms-2">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

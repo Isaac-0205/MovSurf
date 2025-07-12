@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Movie - {{ movie.title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Edit Movie: {{ movie.title }}</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="{{ form.title.id_for_label }}" class="form-label">Title</label>
+                        {{ form.title }}
+                        {{ form.title.errors }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+                        {{ form.description }}
+                        {{ form.description.errors }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.director.id_for_label }}" class="form-label">Director</label>
+                        {{ form.director }}
+                        {{ form.director.errors }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.release_date.id_for_label }}" class="form-label">Release Date</label>
+                        {{ form.release_date }}
+                        {{ form.release_date.errors }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.duration.id_for_label }}" class="form-label">Duration</label>
+                        {{ form.duration }}
+                        {{ form.duration.errors }}
+                        <small class="text-muted">Duration in minutes</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.poster.id_for_label }}" class="form-label">Poster</label>
+                        {{ form.poster }}
+                        {{ form.poster.errors }}
+                        {% if movie.poster %}
+                        <img src="{{ movie.poster.url }}" class="img-fluid mt-2" alt="Current poster" style="max-height: 200px;">
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.trailer_url.id_for_label }}" class="form-label">Trailer URL</label>
+                        {{ form.trailer_url }}
+                        {{ form.trailer_url.errors }}
+                        <small class="text-muted">YouTube embed URL (e.g., https://www.youtube.com/embed/...)</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.genres.id_for_label }}" class="form-label">Genres</label>
+                        {{ form.genres }}
+                        {{ form.genres.errors }}
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

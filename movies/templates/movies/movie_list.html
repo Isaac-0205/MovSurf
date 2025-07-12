@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+{% block title %}Movies - MovieSurf{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <form class="d-flex" method="GET" action="{% url 'movies:movie_list' %}">
+            <input class="form-control me-2" type="search" name="q" placeholder="Search movies..." value="{{ request.GET.q }}">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+    </div>
+    <div class="col">
+        <div class="btn-group float-end">
+            <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                Filter by Genre
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{% url 'movies:movie_list' %}">All Genres</a></li>
+                <li><a class="dropdown-item" href="{% url 'movies:my_bookings' %}">My Bookings</a></li>
+                {% for genre in genres %}
+                <li><a class="dropdown-item" href="{% url 'movies:movie_list' %}?genre={{ genre.id }}">{{ genre.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        <button type="button" class="btn btn-primary ms-2" data-bs-toggle="modal" data-bs-target="#advancedSearchModal">
+            Advanced Search
+        </button>
+        {% if request.user.is_authenticated %}
+        <a href="{% url 'movies:movie_create' %}" class="btn btn-success ms-2">
+            <i class="fas fa-plus"></i> Add Movie
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Advanced Search Modal -->
+<div class="modal fade" id="advancedSearchModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Advanced Search</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form method="GET" action="{% url 'movies:movie_list' %}">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.title.id_for_label }}" class="form-label">Title</label>
+                                {{ form.title }}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.director.id_for_label }}" class="form-label">Director</label>
+                                {{ form.director }}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.min_rating.id_for_label }}" class="form-label">Minimum Rating</label>
+                                {{ form.min_rating }}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.duration_min.id_for_label }}" class="form-label">Duration Range (minutes)</label>
+                                <div class="row">
+                                    <div class="col">
+                                        {{ form.duration_min }}
+                                    </div>
+                                    <div class="col">
+                                        {{ form.duration_max }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.min_year.id_for_label }}" class="form-label">Release Year Range</label>
+                                <div class="row">
+                                    <div class="col">
+                                        {{ form.min_year }}
+                                    </div>
+                                    <div class="col">
+                                        {{ form.max_year }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Genres</label>
+                                <div class="form-check">
+                                    {% for genre in form.genres %}
+                                    <div class="form-check">
+                                        {{ genre.tag }}
+                                        {{ genre.choice_label }}
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    {% for movie in page_obj %}
+    <div class="col-md-3 mb-4">
+        <div class="card">
+            {% if movie.poster %}
+            <img src="{{ movie.poster.url }}" class="card-img-top" alt="{{ movie.title }} poster">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ movie.title }}</h5>
+                <p class="card-text">{{ movie.description|truncatewords:20 }}</p>
+                <p class="card-text"><small class="text-muted">Director: {{ movie.director }}</small></p>
+                <p class="card-text"><small class="text-muted">Release Date: {{ movie.release_date }}</small></p>
+                <p class="card-text"><small class="text-muted">Duration: {{ movie.duration }} minutes</small></p>
+                {% if movie.genres.all %}
+                <p class="card-text">
+                    <small class="text-muted">
+                        Genres: {% for genre in movie.genres.all %}{{ genre.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                    </small>
+                </p>
+                {% endif %}
+                <a href="{% url 'movies:movie_detail' movie_id=movie.id %}" class="btn btn-primary">
+                    <i class="fas fa-info-circle"></i> View Details
+                </a>
+                {% if user.is_authenticated %}
+                <a href="{% url 'movies:add_to_watchlist' movie.pk %}" class="btn btn-success">
+                    <i class="fas fa-plus"></i> Add to Watchlist
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info">No movies found.</div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="row mt-4">
+    <div class="col">
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ request.GET.q }}&genre={{ request.GET.genre }}">Previous</a>
+                </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                    <a class="page-link" href="?page={{ num }}&q={{ request.GET.q }}&genre={{ request.GET.genre }}">{{ num }}</a>
+                </li>
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ request.GET.q }}&genre={{ request.GET.genre }}">Next</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>My Bookings</h2>
+    
+    {% if bookings %}
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Movie</th>
+                    <th>Showtime</th>
+                    <th>Theater</th>
+                    <th>Total Amount</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                <tr>
+                    <td>{{ booking.showtime.movie.title }}</td>
+                    <td>{{ booking.showtime.start_time|date:"F j, Y, g:i A" }}</td>
+                    <td>{{ booking.showtime.screen.theater.name }}</td>
+                    <td>${{ booking.total_amount }}</td>
+                    <td>
+                        <span class="badge {% if booking.status == 'confirmed' %}bg-success{% elif booking.status == 'cancelled' %}bg-danger{% else %}bg-warning{% endif %}">
+                            {{ booking.get_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{% url 'movies:booking_confirmation' booking.id %}" class="btn btn-sm btn-primary">View Details</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        You don't have any bookings yet.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

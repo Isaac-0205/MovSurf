@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Media Debug Information</h1>
+    
+    <div class="card mb-4">
+        <div class="card-header">Settings</div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <tr>
+                    <th>Setting</th>
+                    <th>Value</th>
+                </tr>
+                <tr>
+                    <td>MEDIA_ROOT</td>
+                    <td><code>{{ media_root }}</code></td>
+                </tr>
+                <tr>
+                    <td>MEDIA_URL</td>
+                    <td><code>{{ media_url }}</code></td>
+                </tr>
+                <tr>
+                    <td>DEBUG</td>
+                    <td>{{ debug }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    {% if error %}
+    <div class="alert alert-danger">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <div class="card mb-4">
+        <div class="card-header">Test Files</div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <tr>
+                    <th>File</th>
+                    <th>Exists</th>
+                    <th>URL</th>
+                    <th>Full Path</th>
+                </tr>
+                {% for file in test_files %}
+                <tr>
+                    <td>{{ file.path }}</td>
+                    <td>{% if file.exists %}<span class="text-success">✓</span>{% else %}<span class="text-danger">✗</span>{% endif %}</td>
+                    <td><a href="{{ file.url }}" target="_blank">{{ file.url }}</a></td>
+                    <td><code>{{ file.full_path }}</code></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">All Media Files</div>
+        <div class="card-body">
+            <ul class="list-group">
+                {% for file in all_media_files %}
+                <li class="list-group-item">
+                    <a href="{{ file.url }}" target="_blank">{{ file.path }}</a>
+                </li>
+                {% empty %}
+                <li class="list-group-item">No media files found</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

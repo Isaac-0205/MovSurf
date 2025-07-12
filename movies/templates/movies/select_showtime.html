@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Select Showtime - MovieSurf{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">{{ movie.title }}</h2>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Select Showtime</h5>
+                    
+                    {% if showtimes %}
+                    <div class="list-group">
+                        {% for showtime in showtimes %}
+                        <a href="{% url 'movies:book_movie' showtime.id %}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ showtime.screen.theater.name }} - {{ showtime.screen.name }}</h6>
+                                <small class="text-muted">{{ showtime.start_time|date:"F j, Y, g:i A" }}</small>
+                            </div>
+                            <p class="mb-1">Duration: {{ movie.duration }} minutes</p>
+                            <small class="text-muted">Available Seats: {{ showtime.available_seats }}</small>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        No showtimes available for this movie. Please check back later.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Movie Details</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Duration: {{ movie.duration }} minutes</li>
+                        <li class="list-group-item">Director: {{ movie.director }}</li>
+                        <li class="list-group-item">Release Date: {{ movie.release_date|date:"F j, Y" }}</li>
+                        <li class="list-group-item">Rating: {{ movie.rating }}/10</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

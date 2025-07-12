@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Book Movie - MovieSurf{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Book Movie</h2>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Select Movie</h5>
+                    <div class="list-group">
+                        {% for movie in movies %}
+                        <a href="{% url 'movies:select_showtime' movie.id %}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ movie.title }}</h6>
+                                <small class="text-muted">{{ movie.duration }} min</small>
+                            </div>
+                            <p class="mb-1">{{ movie.description|truncatewords:20 }}</p>
+                            <small class="text-muted">{{ movie.release_date|date:"F j, Y" }}</small>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">How to Book</h5>
+                    <ol class="list-group list-group-numbered">
+                        <li class="list-group-item">Select a movie</li>
+                        <li class="list-group-item">Choose a showtime</li>
+                        <li class="list-group-item">Select your seats</li>
+                        <li class="list-group-item">Complete your booking</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
